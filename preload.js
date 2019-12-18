@@ -13,7 +13,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 // Upload File
-window.uploadFile = function(file, ft, chart, option) {
+window.upload = function(file, ft, chart, option) {
   const result = ipcRenderer.sendSync('uploadFile', {filePath: file.path});
   // Refresh Table
   ft.rows.load(result.tableData);
@@ -35,4 +35,19 @@ window.edit = function(data, ft, chart, option) {
   option.series[1].data = result.chartData.rh;
   option.series[2].data = result.chartData.dew;
   chart.setOption(option);
+};
+
+// Confirm Password
+const PW = "yungil0010";
+window.confirm = function(password) {
+  if (password === "" || password === null) {
+    return false;
+  }
+
+  const blank_pattern = /^\s+|\s+$/g;
+  if (password.replace(blank_pattern, "") === "") {
+      return false;
+  }
+
+  return PW === password;
 };

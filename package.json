@@ -1,25 +1,41 @@
 {
-  "name": "electron-quick-start",
+  "name": "tempchart",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "",
   "main": "main.js",
-  "scripts": {
-    "start": "electron ."
-  },
-  "repository": "https://github.com/electron/electron-quick-start",
-  "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
-  ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
   "devDependencies": {
-    "electron": "^7.1.4"
+    "electron": "^7.1.1",
+    "electron-builder": "^22.1.0"
   },
+  "scripts": {
+    "start": "electron .",
+    "build:win": "npm run build:win32 && npm run build:win64",
+    "build:win32": "electron-builder --win --ia32",
+    "build:win64": "electron-builder --win --x64"
+  },
+  "build": {
+    "appId": "com.tempChart",
+    "asar": true,
+    "win": {
+      "icon": "./resources/win-icon.ico",
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "installerHeaderIcon": "./resources/win-icon.ico",
+      "installerLanguages": [
+        "en_US",
+        "ko_KR"
+      ],
+      "language": "1042"
+    }
+  },
+  "author": "",
+  "license": "ISC",
   "dependencies": {
+    "fs": "0.0.1-security",
     "xlsx": "^0.15.3"
   }
 }

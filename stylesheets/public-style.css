@@ -1,0 +1,100 @@
+.base-bg {
+    background-color: #EDF2F9;
+}
+
+.wrapper {
+    padding: 20px 25px;
+}
+
+.itemBox {
+    margin-bottom: 25px;
+    background-color: #FFFFFF;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.22), 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+.itemBox-title {
+    position: relative;
+    padding: 15px 90px 0 20px;
+}
+.itemBox h3,
+.itemBox h4,
+.itemBox h5 {
+    margin: 0;
+    user-select: none;
+}
+.itemBox-tools {
+    display: block;
+    float: none;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+.itemBox-tools .tool {
+    margin: 0 3px;
+    color: #434343;
+    font-size: 18px;
+    text-decoration: none;
+    cursor: pointer;
+}
+.itemBox-tools .tool:first-child {
+    margin-right: 3px;
+}
+.itemBox-tools .tool:last-child {
+    margin-left: 3px;
+}
+.itemBox-tools .tool:hover {
+    color: #868686;
+}
+
+/* Chart */
+#chart-temp {
+    width: 100%;
+    height: 410px;
+    padding-bottom: 25px;
+}
+
+/* Table */
+#table-data > thead > tr > th,
+#table-data > tbody > tr > td {
+    text-align: center;
+}
+#table-data > tbody > tr > td {
+    cursor: pointer;
+}
+
+/* Modal */
+#modal-edit .subject {
+    display: block;
+    margin-bottom: 3px;
+}
+#modal-edit .input-group {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+#modal-edit .input-group:first-child {
+    padding-left: 0;
+    padding-right: 5px;
+}
+#modal-edit .input-group:last-child {
+    padding-left: 5px;
+    padding-right: 0;
+}
+
+.flex {
+    display: flex;
+}
+.flex-3 {
+    flex: 33.333%;
+    max-width: 33.333%;
+}
+
+#modal-encrypt .subject {
+    display: block;
+    margin-bottom: 3px;
+}
+#modal-encrypt .warning-message {
+    color: #ff0000;
+    font-size: 15px;
+    font-weight: 200;
+    margin: 5px 0 0 0;
+}
