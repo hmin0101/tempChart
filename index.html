@@ -1,19 +1,317 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <title>Hello World!</title>
-  </head>
-  <body>
-    <h1>Hello World!</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
+<html lang="kr">
+<head>
+  <meta charset="UTF-8">
+  <title>tempChart</title>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
 
-    <!-- You can also require other files to run in this process -->
-    <script src="./renderer.js"></script>
-  </body>
+  <!-- Bootstrap 3.4.1 -->
+  <link rel="stylesheet" href="./stylesheets/bootstrap-3.4.1.min.css">
+  <!-- FooTable -->
+  <link rel="stylesheet" href="./stylesheets/footable.core.css">
+  <!-- FontAweSome-->
+  <link rel="stylesheet" href="./resources/fontawesome/css/all.min.css">
+  <style>
+    .base-bg {
+      background-color: #EDF2F9;
+    }
+
+    .wrapper {
+      padding: 20px 25px;
+    }
+
+    .itemBox {
+      margin-bottom: 25px;
+      background-color: #FFFFFF;
+      border-radius: 5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.22), 0 3px 6px rgba(0, 0, 0, 0.3);
+    }
+    .itemBox-title {
+      position: relative;
+      padding: 15px 90px 0 20px;
+    }
+    .itemBox h3,
+    .itemBox h4,
+    .itemBox h5 {
+      margin: 0;
+      user-select: none;
+    }
+    .itemBox-tools {
+      display: block;
+      float: none;
+      position: absolute;
+      top: 15px;
+      right: 15px;
+    }
+    .itemBox-tools .tool {
+      margin: 0 3px;
+      color: #434343;
+      font-size: 18px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .itemBox-tools .tool:first-child {
+      margin-right: 3px;
+    }
+    .itemBox-tools .tool:last-child {
+      margin-left: 3px;
+    }
+    .itemBox-tools .tool:hover {
+      color: #868686;
+    }
+
+    /* Chart */
+    #chart-temp {
+      width: 100%;
+      height: 410px;
+      padding-bottom: 25px;
+    }
+
+    /* Table */
+    #table-data > thead > tr > th,
+    #table-data > tbody > tr > td {
+      text-align: center;
+    }
+    #table-data > tbody > tr > td {
+      cursor: pointer;
+    }
+
+    /* Modal */
+    #modal-edit .subject {
+      display: block;
+      margin-bottom: 3px;
+    }
+    #modal-edit .input-group {
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+    #modal-edit .input-group:first-child {
+      padding-left: 0;
+      padding-right: 5px;
+    }
+    #modal-edit .input-group:last-child {
+      padding-left: 5px;
+      padding-right: 0;
+    }
+
+    .flex {
+      display: flex;
+    }
+    .flex-3 {
+      flex: 33.333%;
+      max-width: 33.333%;
+    }
+  </style>
+</head>
+<body class="base-bg">
+<div class="wrapper">
+  <div class="itemBox">
+    <div class="itemBox-title">
+      <h4>Comprehensive Graph</h4>
+      <div class="itemBox-tools">
+        <a class="tool" id="btn-upload"><i class="fal fa-arrow-circle-up"></i></a>
+        <a class="tool" id="btn-download"><i class="fal fa-arrow-circle-down"></i></a>
+        <input class="hidden" type="file" id="input-upload"/>
+      </div>
+    </div>
+    <div class="itemBox-content">
+      <div id="chart-temp"></div>
+    </div>
+  </div>
+  <div class="itemBox">
+    <div class="itemBox-title">
+      <h4>Raw Data Table</h4>
+      <div class="itemBox-tools">
+        <a class="tool" id="btn-change"><i class="fas fa-sync-alt"></i></a>
+      </div>
+    </div>
+    <div class="itemBox-content">
+      <table class="table" id="table-data"></table>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modal-edit" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Edit Raw Data</h4>
+      </div>
+      <div class="modal-body">
+        <div class="flex">
+          <div class="input-group flex-3">
+            <small class="subject">Temperature</small>
+            <input class="form-control" type="number" id="input-t" />
+          </div>
+          <div class="input-group flex-3">
+            <small class="subject">Humidity</small>
+            <input class="form-control" type="number" id="input-h" />
+          </div>
+          <div class="input-group flex-3">
+            <small class="subject">Dew Point</small>
+            <input class="form-control" type="number" id="input-d" />
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="btn-save">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JQuery -->
+<script src="./javascripts/jquery-1.12.4.min.js"></script>
+<!-- Bootstrap 3.4.1 -->
+<script src="./javascripts/bootstrap-3.4.1.min.js"></script>
+<!-- Moment -->
+<script src="./javascripts/moment-2.24.0.min.js"></script>
+<!-- Chart JS -->
+<script src="./javascripts/echart-4.5.0.min.js"></script>
+<script src="./javascripts/echart-theme.js"></script>
+<!-- FooTable -->
+<script src="./javascripts/footable-3.1.6.js"></script>
+<!-- Rendered -->
+<script src="./javascripts/upload.js"></script>
+<script>
+  $(document).ready(function() {
+
+    // Chart
+    const tempChart = echarts.init(document.getElementById("chart-temp"));
+    const option = {
+      toolbox: {
+        show: false,
+        feature: {
+          saveAsImage: {
+            type: "png",
+            backgroundColor: "#fff",
+          }
+        }
+      },
+      tooltip : {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow',
+          label: {
+            show: true
+          }
+        }
+      },
+      legend: {},
+      xAxis: [{
+        type: "time",
+      }],
+      yAxis: [{
+        type: "value",
+        name: "Temp",
+      }, {
+        type: "value",
+        name: "Humidity",
+      }],
+      series: [{
+        name: 'temp',
+        type: 'line',
+        smooth: true,
+        yAxisIndex: 0,
+        data: [5, 20, 36, 10, 10, 20]
+      },{
+        name: 'rh',
+        type: 'line',
+        smooth: true,
+        yAxisIndex: 1,
+        data: []
+      },{
+        name: 'dew',
+        type: 'line',
+        smooth: true,
+        yAxisIndex: 0,
+        data: []
+      }],
+      dataZoom: [{
+        start: 0,
+        end: 100
+      }, {
+        start: 0,
+        end: 100,
+        handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+        handleSize: '80%',
+        handleStyle: {
+          color: '#fff',
+          shadowBlur: 3,
+          shadowColor: 'rgba(0, 0, 0, 0.6)',
+          shadowOffsetX: 2,
+          shadowOffsetY: 2
+        }
+      }],
+    };
+    tempChart.setOption(option);
+
+    // FooTable
+    const ft = FooTable.init('#table-data', {
+      columns: [
+        {name: "index", title: "", classes: "hidden"},
+        {name: "date", title: "Date", type: "string"},
+        {name: "temp", title: "Temp(°C)", type: "number"},
+        {name: "rh", title: "RH(%rh)", type: "number"},
+        {name: "dew", title: "DewPoint(°C)", type: "number"},
+      ]
+    });
+
+    // Select Upload File
+    const uploadButton = document.getElementById("btn-upload");
+    uploadButton.addEventListener("click", function() {
+      document.getElementById("input-upload").click();
+    });
+
+    // Upload Event
+    document.getElementById("input-upload").addEventListener("change", function() {
+      const file = this.files[0];
+      upload(file, ft, tempChart, option)
+    });
+
+    // Click Row Event
+    let currentIndex = 0;
+    $(document).on("click", "#table-data > tbody > tr > td", function() {
+      const row = FooTable.getRow(this).value;
+      currentIndex = row.index;
+
+      $('#input-t').val(row.temp);
+      $('#input-h').val(row.rh);
+      $('#input-d').val(row.dew);
+
+      $('#modal-edit').modal("show");
+    });
+
+    // Save Button Event
+    $('#modal-edit #btn-save').on("click", function() {
+      if (currentIndex !== 0) {
+        const data = {
+          index: currentIndex,
+          temp: $('#input-t').val(),
+          rh: $('#input-h').val(),
+          dew: $('#input-d').val()
+        };
+        edit(data, ft, tempChart, option);
+        currentIndex = 0;
+
+        $('#modal-edit').modal("hide");
+      }
+    });
+
+    // Download Chart Image
+    document.getElementById("btn-download").addEventListener("click", function() {
+      let dataURL = tempChart.getDataURL({backgroundColor: "#fff"});
+      dataURL = dataURL.replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
+
+      const aTag = document.createElement('a');
+      aTag.download = 'comprehensive_graph.png';
+      aTag.href = dataURL;
+      aTag.click();
+    });
+
+  });
+</script>
+</body>
 </html>
