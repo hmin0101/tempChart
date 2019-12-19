@@ -28,16 +28,18 @@ $(document).ready(function() {
         yAxis: [{
             type: "value",
             name: "Temp",
+            scale: true
         }, {
             type: "value",
             name: "Humidity",
+            scale: true
         }],
         series: [{
             name: 'temp',
             type: 'line',
             smooth: true,
             yAxisIndex: 0,
-            data: [5, 20, 36, 10, 10, 20]
+            data: []
         },{
             name: 'rh',
             type: 'line',
@@ -90,7 +92,14 @@ $(document).ready(function() {
     // Upload Event
     document.getElementById("input-upload").addEventListener("change", function() {
         const file = this.files[0];
-        upload(file, ft, tempChart, option)
+        // 확장자 검사
+        // const split = file.name.split('.');
+        // const extension = split[split.length - 1];
+        // if (extension === "csv") {
+            upload(file, ft, tempChart, option)
+        // } else {
+        //     alert("올바른 확장자가 아닙니다.");
+        // }
     });
 
     // Click Row Event

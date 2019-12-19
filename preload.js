@@ -3,9 +3,9 @@ const { ipcRenderer } = require('electron');
 // It has the same sandbox as a Chrome extension.
 window.addEventListener('DOMContentLoaded', () => {
   const replaceText = (selector, text) => {
-    const element = document.getElementById(selector)
+    const element = document.getElementById(selector);
     if (element) element.innerText = text
-  }
+  };
 
   for (const type of ['chrome', 'node', 'electron']) {
     replaceText(`${type}-version`, process.versions[type])
@@ -38,7 +38,7 @@ window.edit = function(data, ft, chart, option) {
 };
 
 // Confirm Password
-const PW = "yungil0010";
+const PW = "yoht251";
 window.confirm = function(password) {
   if (password === "" || password === null) {
     return false;

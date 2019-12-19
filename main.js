@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow} = require('electron');
 const { ipcMain } = require('electron');
 
 const xlsx = require('xlsx');
@@ -7,7 +7,7 @@ const path = require('path');
 const moment = require('./javascripts/moment-2.24.0.min');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+let mainWindow;
 
 function createWindow () {
   // Create the browser window.
@@ -17,10 +17,16 @@ function createWindow () {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
     }
-  })
+  });
+  mainWindow.removeMenu();
+
+  // Hide the menu bar
+  // mainWindow.webContents.once('dom-ready', function () {
+  //   mainWindow.setMenu(null);
+  // });
 
   // and load the index.html of the app.
-  mainWindow.loadFile('index.html')
+  mainWindow.loadFile('index.html');
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -30,27 +36,27 @@ function createWindow () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    mainWindow = null
-  })
+    mainWindow = null;
+  });
 }
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', createWindow);
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') app.quit()
-})
+  if (process.platform !== 'darwin') app.quit();
+});
 
 app.on('activate', function () {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) createWindow()
-})
+  if (mainWindow === null) createWindow();
+});
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
@@ -68,6 +74,12 @@ const cache = {
 
 // FileUpload
 ipcMain.on('uploadFile', function(event, arg) {
+
+  // init
+  cache.table = [];
+  cache.chart.temp = [];
+  cache.chart.rh = [];
+  cache.chart.dew = [];
 
   const workbook = xlsx.readFile(arg.filePath, {type: "buffer"});
   const sheetName = Object.keys(workbook.Sheets);
@@ -90,11 +102,21 @@ ipcMain.on('uploadFile', function(event, arg) {
       // 오전/오후 구분하여 Date Format 생성
       const tt = dateStr.v.trim().split(' ');
       let date = tt[0], time = null;
+      const split = tt[2].split(':');
       if (tt[1] === "오후") {
-        const split = tt[2].split(':');
         time = (Number(split[0]) + 12) + ":" + split[1] + ":" + split[2];
+      } else {
+        let hour;
+        if (split[0] === "12") {
+          hour = "00";
+        } else {
+          hour = "0"+split[0];
+        }
+        time = hour + ":" + split[1] + ":" + split[2];
       }
+      console.log(time);
       const calculatedDate = new Date(date + "T" + time);
+      console.log(calculatedDate);
 
       const editDate = moment(calculatedDate).format('YYYY-MM-DD HH:mm:ss');
 
