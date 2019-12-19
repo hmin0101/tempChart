@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "devDependencies": {
-    "electron": "^7.1.1",
+    "electron": "^6.0.3",
     "electron-builder": "^22.1.0"
   },
   "scripts": {
@@ -23,13 +23,12 @@
       ]
     },
     "nsis": {
+      "createDesktopShortcut": true,
       "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
       "installerHeaderIcon": "./resources/win-icon.ico",
-      "installerLanguages": [
-        "en_US",
-        "ko_KR"
-      ],
-      "language": "1042"
+      "language": 1042
     }
   },
   "author": "",
