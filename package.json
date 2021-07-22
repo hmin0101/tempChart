@@ -35,6 +35,6 @@
   "license": "ISC",
   "dependencies": {
     "fs": "0.0.1-security",
-    "xlsx": "^0.15.3"
+    "xlsx": "^0.17.0"
   }
 }
